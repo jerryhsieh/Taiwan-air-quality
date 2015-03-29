@@ -1,0 +1,51 @@
+---
+title: "永和區 PM 2.5"
+author: "Jerry Hsieh"
+date: "2015年3月29日"
+output: html_document
+---
+
+#### Introduction and Data
+
+PM 2.5 is hot topic recently, I'm wondering what it will be around my living area?
+
+The data come from http://taqm.epa.gov.tw/taqm/tw/YearlyDataDownload.aspx
+
+行政院環境保護署 
+
+環保署＼空氣品質監測網＼資料查詢與服務＼空氣品質測站＼歷年監測資料下載
+
+### Loading data
+
+```{r echo=FALSE, message=FALSE}
+air <- read.csv("103YH20150324.csv", stringsAsFactor=FALSE)
+airPM <- subset(air, Test.Item == "PM2.5")
+airPM$Date <- as.Date(airPM$Date)
+airPM[4:27] <- lapply(airPM[4:27], as.numeric)
+library(ggplot2)
+```
+
+### calculate average by date and plot
+
+Graph shown PM 2.5 is high
+
+```{r, echo=FALSE}
+library(ggplot2)
+airPM$avg <- rowMeans(airPM[4:27], na.rm=TRUE)
+plot(airPM$Date, airPM$avg)
+abline(h=15)
+```
+
+Only `r sum(airPM$avg < 15)` days are under standard = 15
+
+### when is best air quality within a day
+
+Graph shown in the morning 4,5,6 o'clock are the best air quality within a day
+
+```{r, echo=FALSE}
+col <- colMeans(airPM[4:27], na.rm=TRUE)
+plot(col)
+```
+
+
+
